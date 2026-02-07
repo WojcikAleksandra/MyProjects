@@ -67,6 +67,6 @@ The plot on the right represents a “zooming out” from the center (the point 
 
 <img src="./visualizations/example6.png" alt="example6" width="800">
 
-### Example 6 - a very interesting "arm" structure in the visualization
+### Example 6 - a very interesting arm-like structure in the visualization
 
 <img src="./visualizations/example7.PNG" alt="example7" width="250">
