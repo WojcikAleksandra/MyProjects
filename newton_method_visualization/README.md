@@ -18,3 +18,20 @@ The results are visualized as images illustrating the convergence behavior of th
 
 Numerical errors were analyzed by comparing roots obtained using Newton’s method with reference roots computed in Wolfram Alpha. Absolute errors were visualized using a color scale, where brighter yellow indicates larger errors and darker green represents smaller errors.
 
+![errors1](./visualizations/errors1.png)
+
+![errors2](./visualizations/errors2.png)
+
+![example1](./visualizations/example1.png)
+
+![example2](./visualizations/example2.png)
+
+![example3](./visualizations/example3.png)
+
+![example4](./visualizations/example4.png)
+
+![example5](./visualizations/example5.png)
+
+![example6](./visualizations/example6.png)
+
+![example7](./visualizations/example7.PNG)
