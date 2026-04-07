@@ -12,20 +12,18 @@ operations and compared with the SQL results to verify correctness.
 import pandas as pd
 import numpy as np
 
-import os
-
-Posts = pd.read_csv(os.path.expanduser("~/Posts.csv.gz"), compression="gzip")
+Posts = pd.read_csv("data/Posts.csv.gz", compression = 'gzip')
 # print(Posts.head())
 
-Users = pd.read_csv(os.path.expanduser("~/Users.csv.gz"), compression = 'gzip')
+Users = pd.read_csv("data/Users.csv.gz", compression = 'gzip')
 # print(Users.head())
 
-Comments = pd.read_csv(os.path.expanduser("~/Comments.csv.gz"), compression = 'gzip')
+Comments = pd.read_csv("data/Comments.csv.gz", compression = 'gzip')
 # print(Comments.head())
 
 import sqlite3
 
-baza = os.path.expanduser('~/pdu_pd5.db')
+baza = 'data/pdu_pd5.db'
 conn = sqlite3.connect(baza)
 # Comments.to_sql("Comments", conn)
 # Posts.to_sql("Posts", conn)
