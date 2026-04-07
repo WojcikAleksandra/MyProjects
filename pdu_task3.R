@@ -2,7 +2,7 @@
 ### analytical tasks using four approaches: SQL with sqldf, base R, dplyr, 
 ### and data.table. For each task, the script provides alternative solutions, 
 ### along with commented-out code for result validation and performance benchmarking,
-### as well as the obtained benchmark results.
+### as well as the obtained performance results.
 
 
 # -----------------------------------------------------------------------------#
