@@ -3,6 +3,7 @@
 library(data.table)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 
 Airports <- as.data.table(read.csv("data/airports.csv"))
 Carriers <- as.data.table(read.csv("data/carriers.csv"))
@@ -169,13 +170,25 @@ if (has_2003_2008) {
 
   values <- unlist(agg_result_1[1,])
   labels_2 <- paste(round(values, 2), "%", sep = "")
-  labels_1 <- paste(paste(names(agg_result_1), ": ", sep = ""), labels_2, sep = "")
+  causes <- c(
+    CarrierDelay = "Carrier Delay",
+    WeatherDelay = "Weather Delay",
+    NASDelay = "NAS Delay",
+    SecurityDelay = "Security Delay",
+    LateAircraftDelay = "Late Aircraft Delay"
+  )
+  labels_1 <- paste0(causes[names(agg_result_1)], ": ", labels_2)
   
   plot_1 <- ggplot(data.frame(x = labels_1, y = values), aes(x = "", y = y, fill = x)) +
     geom_bar(width = 1, stat = "identity", color = "white") +
     coord_polar(theta = "y") +
-    scale_fill_manual(values = c("skyblue", "lightpink", "lightgreen", "orchid", "#FFCC99")) +
-    labs(title = "Procentowy udział przyczyn opóźnień lotów \nw całkowitym czasie opóźnienia w latach 2003-2008") +
+    scale_fill_manual(
+      values = c("skyblue", "lightpink", "lightgreen", "orchid", "#FFCC99")
+    ) +
+    labs(
+      title = "Procentowy udział przyczyn opóźnień lotów \nw całkowitym czasie opóźnienia w latach 2003-2008",
+      fill = "Przyczyna"
+    ) +
     theme_void() +
     theme(plot.title = element_text(size = 20), plot.margin = unit(c(5, 5, 5, 5), "mm"), legend.text = element_text(size = 12), 
           legend.title = NULL)
@@ -201,21 +214,44 @@ delay_data <- delay_data[, .(
   by = Year]
 delay_data <- as.data.frame(delay_data)
 
-### wykres słupkowy: (próba utworzenia wykresu, w którym dla każdego roku jest 5 słupków odpowiadających całkowitemu czasowi 
+### wykres słupkowy: 
+# (dla każdego roku 5 słupków odpowiadających całkowitemu czasowi 
 # opóźnienia dla każdej przyczyny)
 
-plot_2 <- ggplot(delay_data, aes(x = Year)) +
- geom_bar(aes(y = CarrierDelay), stat = "identity", fill = "skyblue", width = 0.1) +
- geom_bar(aes(y = WeatherDelay), stat = "identity", fill = "#FFCC99", width = 0.1) +
- geom_bar(aes(y = NASDelay), stat = "identity", fill = "lightgreen", width = 0.1) +
- geom_bar(aes(y = SecurityDelay), stat = "identity", fill = "orchid", width = 0.1) +
- geom_bar(aes(y = LateAircraftDelay), stat = "identity", fill = "lightpink", width = 0.1) +
- labs(x = "Year", y = "Delay Hours (1000 h)") +
- scale_fill_manual(values = c("skyblue", "#FFCC99", "lightgreen", "orchid", "lightpink"),
-                   labels = c("Carrier Delay", "Weather Delay", "NAS Delay", "Security Delay", "Late Aircraft Delay")) +
- scale_y_continuous(limits = c(0, 700), breaks = seq(0, 700, by = 50)) +
- labs(title = "Całkowite opóźnienie według przyczyny w latach 2003-2008") +
- theme_minimal()
+delay_data_long <- delay_data %>%
+  pivot_longer(
+    cols = c(CarrierDelay, WeatherDelay, NASDelay, SecurityDelay, LateAircraftDelay),
+    names_to = "Cause",
+    values_to = "DelayHours"
+  )
+
+plot_2 <- ggplot(delay_data_long, aes(x = factor(Year), y = DelayHours, fill = Cause)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  scale_fill_manual(
+    values = c(
+      CarrierDelay = "skyblue",
+      WeatherDelay = "#FFCC99",
+      NASDelay = "lightgreen",
+      SecurityDelay = "orchid",
+      LateAircraftDelay = "lightpink"
+    ),
+    labels = c(
+      CarrierDelay = "Carrier Delay",
+      WeatherDelay = "Weather Delay",
+      NASDelay = "NAS Delay",
+      SecurityDelay = "Security Delay",
+      LateAircraftDelay = "Late Aircraft Delay"
+    )
+  ) +
+  labs(
+    title = "Całkowite opóźnienie według przyczyny w latach 2003-2008",
+    x = "Rok",
+    y = "Czas opóźnienia (tys. godzin)",
+    fill = "Przyczyna"
+  ) +
+  scale_y_continuous(breaks = seq(0, 700, by = 50)) +
+  theme_minimal()
+
 plot_2
 
 
@@ -298,7 +334,6 @@ if (has_2003_2008) {
 
   delayed_flights_number <- rbind(delayed_flights_number_2003, delayed_flights_number_2004, delayed_flights_number_2005, 
                                 delayed_flights_number_2006, delayed_flights_number_2007, delayed_flights_number_2008)
-
 } else {
   delayed_flights_number <- delayed_flights_number_2008
 }
@@ -323,8 +358,8 @@ average_delay <- average_delay[, .(AverageDelay = round(SumDelayMinutes / Delaye
 plot_3 <- ggplot(as.data.frame(average_delay), aes(DelayCause, AverageDelay)) +
   geom_bar(stat = "identity", fill = "skyblue", width = 0.7) +
   xlab(NULL) +
-  ylab("Average Delay (minutes)") +
-  ggtitle("Średni czas opóźnienia lotu według przyczyny") +
+  ylab("Średnie opóźnienie (min.)") +
+  ggtitle("Średni czas opóźnienia lotu według przyczyny w latach 2003-2008") +
   coord_flip() +
   theme(plot.title = element_text(size = 18), plot.margin = unit(c(5, 5, 5, 5), "mm"), axis.text = element_text(size = 11))
 plot_3
