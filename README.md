@@ -1,1 +1,1 @@
-### *Structured Data Processing* course assignments in R and Python (data analysis and visualization)
+### *Structured Data Processing (PDU)* course assignments in R and Python (data analysis and visualization)
